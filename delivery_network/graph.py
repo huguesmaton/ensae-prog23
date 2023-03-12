@@ -114,11 +114,35 @@ class Graph:
         """
         return set(map(frozenset, self.connected_components()))
     
+
     def min_power(self, src, dest):
         """
         Should return path, min_power. 
         """
-        raise NotImplementedError
+        n = 0
+        gauche = 0
+        droite = 1
+        epsilon=10**(-3)
+        
+        def dichotomie(gauche, droite):
+            while abs(gauche-droite) > epsilon:
+                milieu = (droite + gauche)/2
+                if self.get_path_with_power(src,dest,milieu) != None:
+                    droite = milieu
+                else:
+                    gauche = milieu
+                dichotomie(gauche,droite)
+            if droite-int(droite)<0.5:
+                return self.get_path_with_power(src,dest,droite),int(droite)
+            else:  
+                return self.get_path_with_power(src,dest,droite),int(droite)+1
+        
+        while self.get_path_with_power(src, dest, droite) == None:
+            n += 1
+            gauche = 2**(n-1)
+            droite = 2**n
+        return dichotomie(gauche, droite)
+
 
 
 def graph_from_file(filename):
