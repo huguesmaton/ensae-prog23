@@ -73,26 +73,23 @@ class Graph:
         raise NotImplementedError
     
 
-    def parcours_profondeur(self, node1, deja_visites):
-        '''
-        Fonction qui sera appelé dans la prochaine fonction pour effectuer un parcours en profondeur à partir d'un noeud donné.
-        '''
-        composante_node1 = []
-        for elmt in self.graph[node1]:
-            node2 = elmt[0]
-            if not node2 in deja_visites:
-                composante_node1.append(node2)
-                deja_visites.append(node2)
-        return composante_node1
-
-
 
     def connected_components(self):
         composantes_connexes = []
         deja_visites = []
+        
+        def parcours_profondeur(node1):
+            composante_node1 = [node1]
+            for triple in self.graph[node1]:
+                node2 = triple[0]
+                if not node2 in deja_visites:
+                    deja_visites.append(node2)
+                    composante_node1 += parcours_profondeur(node2)
+            return composante_node1
+
         for node1 in self.nodes:
             if node1 not in deja_visites:
-                composantes_connexes.append(parcours_profondeur(node1,deja_visites))
+                composantes_connexes.append(parcours_profondeur(node1))
         return composantes_connexes
 
 
