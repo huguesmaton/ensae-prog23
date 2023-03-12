@@ -1,4 +1,4 @@
-class Graph: #test
+class Graph:
     """
     A class representing graphs as adjacency lists and implementing various algorithms on the graphs. Graphs in the class are not oriented. 
     Attributes: 
@@ -73,8 +73,27 @@ class Graph: #test
         raise NotImplementedError
     
 
+    def parcours_profondeur(self, node1, deja_visites):
+        '''
+        Fonction qui sera appelé dans la prochaine fonction pour effectuer un parcours en profondeur à partir d'un noeud donné.
+        '''
+        composante_node1 = []
+        for elmt in self.graph[node1]:
+            node2 = elmt[0]
+            if not node2 in deja_visites:
+                composante_node1.append(node2)
+                deja_visites.append(node2)
+        return composante_node1
+
+
+
     def connected_components(self):
-        raise NotImplementedError
+        composantes_connexes = []
+        deja_visites = []
+        for node1 in self.nodes:
+            if node1 not in deja_visites:
+                composantes_connexes.append(parcours_profondeur(node1,deja_visites))
+        return composantes_connexes
 
 
     def connected_components_set(self):
