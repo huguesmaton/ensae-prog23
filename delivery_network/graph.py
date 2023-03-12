@@ -70,7 +70,21 @@ class Graph:
     
 
     def get_path_with_power(self, src, dest, power):
-        raise NotImplementedError
+        deja_visites = []
+        
+        def chemins(node1, chemin):
+            if node1 == dest:
+                return chemin
+            for triple in self.graph[node1]:
+                node2, power_min, dist = triple
+                if node2 not in deja_visites and power_min <= power:
+                    deja_visites.append(node2)
+                    cheminrec = chemins(node2, chemin+[node2])
+                    if cheminrec is not None:
+                        return cheminrec
+            return None
+
+        return chemins(src, [src])
     
 
 
@@ -82,7 +96,7 @@ class Graph:
             composante_node1 = [node1]
             for triple in self.graph[node1]:
                 node2 = triple[0]
-                if not node2 in deja_visites:
+                if node2 not in deja_visites:
                     deja_visites.append(node2)
                     composante_node1 += parcours_profondeur(node2)
             return composante_node1
