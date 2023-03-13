@@ -180,3 +180,48 @@ def graph_from_file(filename):
             else:
                 raise Exception("Format incorrect")
     return g
+
+
+
+class UnionFind:
+
+    def __init__(self, n):
+        self.parent = list(range(n))
+        self.rang = [0] * n
+    
+    def find(self, i):
+        if self.parent[i] != i:
+            self.parent[i] = self.find(self.parent[i])
+        return self.parent[i]
+    
+    def union(self, i, j):
+        racinei, racinej = self.find(i), self.find(j)
+        if racinei == racinej:
+            return False
+        if self.rang[racinei] < self.rang[racinej]:
+            self.parent[racinei] = racinej
+        elif self.rang[racinei] > self.rang[racinej]:
+            self.parent[racinej] = racinei
+        else:
+            self.parent[racinei] = racinej
+            self.rang[racinej] += 1
+        return True
+
+
+def kruskal(graph):
+
+    aretes = []
+    for node1 in graph:
+        for node2, power_min, dist in graph[node1]:
+            aretes.append((power_min, node1, node2))
+    aretes.sort()
+    
+    n = len(graph)
+    uf = UnionFind(n)
+    
+    graph_acm = [] #acm = arbre couvrant minimum
+    for weight, u, v in aretes:
+        if uf.union(u, v):
+            mst.append((u, v, weight))
+    
+    return graph_acm
