@@ -141,6 +141,7 @@ class Graph:
             n += 1
             gauche = 2**(n-1)
             droite = 2**n
+            
         return dichotomie(gauche, droite)
 
 
