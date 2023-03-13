@@ -208,20 +208,24 @@ class UnionFind:
         return True
 
 
+
 def kruskal(graph):
 
     aretes = []
-    for node1 in graph:
-        for node2, power_min, dist in graph[node1]:
-            aretes.append((power_min, node1, node2))
+    for node1 in graph.graph:
+        for node2, power_min, dist in graph.graph[node1]:
+            if node1 < node2:
+                aretes.append((power_min, node1, node2))
     aretes.sort()
     
-    n = len(graph)
-    uf = UnionFind(n)
+    n = graph.nb_nodes
+    uf = UnionFind(n + max(graph.nodes))
     
-    graph_acm = [] #acm = arbre couvrant minimum
-    for weight, u, v in aretes:
-        if uf.union(u, v):
-            mst.append((u, v, weight))
+    graph_acm = Graph() #acm = arbre couvrant minimum
+    for power_min, node1, node2 in aretes:
+        if uf.union(node1, node2):
+            graph_acm.add_edge(node1, node2, power_min)
     
     return graph_acm
+
+
