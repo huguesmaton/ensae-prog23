@@ -1,3 +1,5 @@
+import heapq
+
 class Graph:
     """
     A class representing graphs as adjacency lists and implementing various algorithms on the graphs. Graphs in the class are not oriented. 
@@ -143,6 +145,67 @@ class Graph:
             droite = 2**n
             
         return dichotomie(gauche, droite)
+    
+
+    def min_power_acm_naif(self, src, dest):
+        self = kruskal(self)
+        return self.min_power(src, dest)
+    
+
+    def min_power_acm(self, start_id, end_id):
+        
+        graph = self.graph
+        # Initialiser les distances et les parents
+        dist = {id: float('inf') for id in graph}
+        dist[start_id] = 0
+        parent = {id: None for id in graph}
+
+        # Initialiser une liste de priorité pour stocker les noeuds non visités
+        unvisited = [(0, start_id)]
+        heapq.heapify(unvisited)
+
+        # Parcourir tous les noeuds non visités
+        while unvisited:
+            # Obtenir le noeud non visité avec la distance minimale
+            current_dist, current_id = heapq.heappop(unvisited)
+
+            # Vérifier si le noeud a déjà été visité
+            if current_dist > dist[current_id]:
+                continue
+
+            # Si le noeud est celui que nous cherchons, arrêter l'algorithme
+            if current_id == end_id:
+                break
+
+            # Parcourir les arêtes sortantes du noeud
+            for to_id, power, distance in graph[current_id]:
+                # Calculer la distance jusqu'au noeud voisin
+                neighbor_dist = power
+
+                # Mettre à jour la distance et le parent si la distance est plus courte
+                if neighbor_dist < dist[to_id]:
+                    dist[to_id] = neighbor_dist
+                    parent[to_id] = current_id
+
+                    # Ajouter le noeud voisin à la liste de priorité
+                    heapq.heappush(unvisited, (dist[to_id], to_id))
+
+        # Calculer la puissance minimale requise pour parcourir le chemin entre les deux noeuds dans l'arbre
+        current_id = end_id
+        min_power = float('inf')
+        while current_id != start_id:
+            parent_id = parent[current_id]
+            for to_id, power, distance in graph[current_id]:
+                if to_id == parent_id:
+                    min_power = min(min_power, power)
+                    break
+            current_id = parent_id
+
+        return min_power
+        return self.get_path_with_power(src, dest, min_power), min_power
+    
+
+
 
 
 
