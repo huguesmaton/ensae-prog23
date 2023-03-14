@@ -26,3 +26,6 @@ aretes.sort()
 print(aretes)
 
 print(kruskal(gtest))
+
+gg=Graph(range(1,12))
+print(gg.graph)

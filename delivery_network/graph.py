@@ -221,7 +221,7 @@ def kruskal(graph):
     n = graph.nb_nodes
     uf = UnionFind(n + max(graph.nodes))
     
-    graph_acm = Graph() #acm = arbre couvrant minimum
+    graph_acm = Graph(range(1,n+1)) #acm = arbre couvrant minimum
     for power_min, node1, node2 in aretes:
         if uf.union(node1, node2):
             graph_acm.add_edge(node1, node2, power_min)
