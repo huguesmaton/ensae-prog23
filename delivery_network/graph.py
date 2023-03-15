@@ -88,6 +88,7 @@ class Graph:
             return None #Si tout les voisisns, et donc recursivement tous les noeuds de la composante connexe du noeud node1, alors il n'y a pas de chemin possible, on renvoie None
 
         return chemins(src, [src]) #On appelle chemins sur le noeud source
+#Chaque noeud est parcouru une seule fois donc la compléxité est en O(nb_nodes)
     
 
 
@@ -128,11 +129,11 @@ class Graph:
         n = 1
         gauche = 0
         droite = 2
-        epsilon=10**(-3) #On initialise des valeurs que l'on va utiliser pour la dichotomie
+        #On initialise des valeurs que l'on va utiliser pour la dichotomie
 
 
         def dichotomie(gauche, droite): #Fonction dichotomie qui prend en argument la borne inf et sup d'un intervalle
-            while droite - gauche > epsilon:
+            while abs(droite - gauche) > 1: #On souhaite droite = gauche
                 milieu = (droite + gauche)/2 #On travaille avec gauche et droite puissances de 2 donc milieu est toujours un entier
                 if self.get_path_with_power(src, dest, milieu) != None:
                     droite = milieu
@@ -147,6 +148,13 @@ class Graph:
             droite = 2**n
             
         return dichotomie(gauche, droite) #On appelle la dichotomie sur les valeurs initialisés
+#La dichotomie est en O(log(droite - gauche)). On commence par chercher le bon intervalle de la forme [2**(n-1), 2**n] en appelant la fonction get_path_with_power. 
+#Donc c'est un O(n), ou n est tq 2**n > puissance max dans le graphe > 2**(n-1).
+#Mais ici on appelle get_path_with_power dans la dichotomie donc la compléxité est O(n*nb_nodes).
+#Pour nb_nodes grand, la compléxité de ce while est un O(nb_nodes) car on va l'appeller k fois et si nb_nodes est grand O(k*nb_nodes) = O(nb_nodes).
+#La compléxité est donc un O(n*nb_nodes + nb_nodes) = O(nb_nodes) pour nb_nodes grand. 
+#REMARQUE : on aurait pu faire la dichotomie sur la liste triée des puissances. Dans le MEILLEUR des cas si le graphe est connexe, le nombre d'aretes est de l'ordre du nombre
+#de noeud et donc trier cette liste est de compléxité O(nb_nodes*log(nb_nodes)). Ceci étant pour le meilleur des cas, on voit bien que cette méthode n'est pas optimale
     
 
 #QUESTION 14 : Première version naive ou on utilise les fonctions precedentes (non optimisées pour des MST) sur le MST donné par kruskal
