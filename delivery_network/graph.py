@@ -41,7 +41,9 @@ class Graph:
             for source, destination in self.graph.items():
                 output += f"{source}-->{destination}\n"
         return output
-    
+
+
+#QUESTION 1 partie 1 : Solution du professeur
     def add_edge(self, node1, node2, power_min, dist=1):
         """
         Adds an edge to the graph. Graphs are not oriented, hence an edge is added to the adjacency list of both end nodes. 
@@ -71,30 +73,32 @@ class Graph:
         self.nb_edges += 1
     
 
+#QUESTION 3 : 
     def get_path_with_power(self, src, dest, power):
         deja_visites = []
         
-        def chemins(node1, chemin):
-            if node1 == dest:
+        def chemins(node1, chemin): #Fonction récursive qui porend en argument un noeud et le chemin suivi pour arriver jusqu'à ce noeud
+            if node1 == dest: #Si le node1 est la destination alors c'est fini
                 return chemin
-            for triple in self.graph[node1]:
+            for triple in self.graph[node1]: #On parcours les voisins de node1
                 node2, power_min, dist = triple
-                if node2 not in deja_visites and power_min <= power:
+                if node2 not in deja_visites and power_min <= power: #On vérifie les conditions, notamment sur la puissance minimale
                     deja_visites.append(node2)
-                    cheminrec = chemins(node2, chemin+[node2])
+                    cheminrec = chemins(node2, chemin+[node2]) #On appelle récursivement la fonction sur chaque voisin
                     if cheminrec is not None:
                         return cheminrec
-            return None
+            return None #Si tout les voisisns, et donc recursivement tous les noeuds de la composante connexe du noeud node1, alors il n'y a pas de chemin possible, on renvoie None
 
-        return chemins(src, [src])
+        return chemins(src, [src]) #On appelle chemins sur le noeud source
     
 
 
+#QUESTION 2 : On commence par écrire une fonction connected_componenents qui renvoie la liste des composantes connexes d'un graphe
     def connected_components(self):
         composantes_connexes = []
         deja_visites = []
         
-        def parcours_profondeur(node1):
+        def parcours_profondeur(node1): #On écrit une fonction parcours en profondeur (la fonction est imbriquée pour la lisibilité du code)
             composante_node1 = [node1]
             for triple in self.graph[node1]:
                 node2 = triple[0]
@@ -103,12 +107,13 @@ class Graph:
                     composante_node1 += parcours_profondeur(node2)
             return composante_node1
 
-        for node1 in self.nodes:
+        for node1 in self.nodes: #On parcours le graphe : on effectue un parcours en profondeur a partir d'un noeud ssi le noeud n'a pas encore été visité
             if node1 not in deja_visites:
                 composantes_connexes.append(parcours_profondeur(node1))
         return composantes_connexes
+#Ainsi chaque noeud est parcouru une unique fois, la complexité est donc en O(nb_nodes)
 
-
+#Cette fonction transforme la liste des composantes connéctées en frozenset
     def connected_components_set(self):
         """
         The result should be a set of frozensets (one per component), 
@@ -117,98 +122,47 @@ class Graph:
         return set(map(frozenset, self.connected_components()))
     
 
+#QUESTION 6 : 
     def min_power(self, src, dest):
         """
         Should return path, min_power. 
         """
-        n = 0
+        n = 1
         gauche = 0
-        droite = 1
-        epsilon=10**(-3)
-        
-        def dichotomie(gauche, droite):
-            while abs(gauche-droite) > epsilon:
-                milieu = (droite + gauche)/2
-                if self.get_path_with_power(src,dest,milieu) != None:
+        droite = 2
+        epsilon=10**(-3) #On initialise des valeurs que l'on va utiliser pour la dichotomie
+
+
+        def dichotomie(gauche, droite): #Fonction dichotomie qui prend en argument la borne inf et sup d'un intervalle
+            while droite - gauche > epsilon:
+                milieu = (droite + gauche)/2 #On travaille avec gauche et droite puissances de 2 donc milieu est toujours un entier
+                if self.get_path_with_power(src, dest, milieu) != None:
                     droite = milieu
                 else:
                     gauche = milieu
                 dichotomie(gauche,droite)
-            if droite-int(droite)<0.5:
-                return self.get_path_with_power(src,dest,droite),int(droite)
-            else:  
-                return self.get_path_with_power(src,dest,droite),int(droite)+1
-        
-        while self.get_path_with_power(src, dest, droite) == None:
+            return self.get_path_with_power(src, dest, droite), droite
+
+        while self.get_path_with_power(src, dest, droite) == None: #Tant que la puissance minimale n'est pas d'ans l'intervalle [gauche, droite], on augmente n
             n += 1
             gauche = 2**(n-1)
             droite = 2**n
             
-        return dichotomie(gauche, droite)
+        return dichotomie(gauche, droite) #On appelle la dichotomie sur les valeurs initialisés
     
 
+#QUESTION 14 : Première version naive ou on utilise les fonctions precedentes (non optimisées pour des MST) sur le MST donné par kruskal
+#Ce n'est toujours pas satisfaisant cf fichier temps.py fonction calcul_temps_min_power_acm_naif
     def min_power_acm_naif(self, src, dest):
         self = kruskal(self)
         return self.min_power(src, dest)
     
-
-    def min_power_acm(self, start_id, end_id):
-        
-        graph = self.graph
-        # Initialiser les distances et les parents
-        dist = {id: float('inf') for id in graph}
-        dist[start_id] = 0
-        parent = {id: None for id in graph}
-
-        # Initialiser une liste de priorité pour stocker les noeuds non visités
-        unvisited = [(0, start_id)]
-        heapq.heapify(unvisited)
-
-        # Parcourir tous les noeuds non visités
-        while unvisited:
-            # Obtenir le noeud non visité avec la distance minimale
-            current_dist, current_id = heapq.heappop(unvisited)
-
-            # Vérifier si le noeud a déjà été visité
-            if current_dist > dist[current_id]:
-                continue
-
-            # Si le noeud est celui que nous cherchons, arrêter l'algorithme
-            if current_id == end_id:
-                break
-
-            # Parcourir les arêtes sortantes du noeud
-            for to_id, power, distance in graph[current_id]:
-                # Calculer la distance jusqu'au noeud voisin
-                neighbor_dist = power
-
-                # Mettre à jour la distance et le parent si la distance est plus courte
-                if neighbor_dist < dist[to_id]:
-                    dist[to_id] = neighbor_dist
-                    parent[to_id] = current_id
-
-                    # Ajouter le noeud voisin à la liste de priorité
-                    heapq.heappush(unvisited, (dist[to_id], to_id))
-
-        # Calculer la puissance minimale requise pour parcourir le chemin entre les deux noeuds dans l'arbre
-        current_id = end_id
-        min_power = float('inf')
-        while current_id != start_id:
-            parent_id = parent[current_id]
-            for to_id, power, distance in graph[current_id]:
-                if to_id == parent_id:
-                    min_power = min(min_power, power)
-                    break
-            current_id = parent_id
-
-        return min_power
-        return self.get_path_with_power(src, dest, min_power), min_power
     
 
 
 
 
-
+#QUESTION 1 partie 2 et QUESTION 4: Solution du professeur
 def graph_from_file(filename):
     """
     Reads a text file and returns the graph as an object of the Graph class.
@@ -245,7 +199,7 @@ def graph_from_file(filename):
     return g
 
 
-
+#QUESTION 12 : Comme suggéré dans l'énoncé, on commence par implémenter la classe UnionFind
 class UnionFind:
 
     def __init__(self, n):
@@ -271,7 +225,7 @@ class UnionFind:
         return True
 
 
-
+#Kruskal crée l'arbre minimum couvrant, on suppose donc que le graphe est connexe
 def kruskal(graph):
 
     aretes = []
@@ -279,15 +233,15 @@ def kruskal(graph):
         for node2, power_min, dist in graph.graph[node1]:
             if node1 < node2:
                 aretes.append((power_min, node1, node2))
-    aretes.sort()
+    aretes.sort() #On trie les aretes par poids croissant
     
     n = graph.nb_nodes
-    uf = UnionFind(n + max(graph.nodes))
+    uf = UnionFind(n + 1) #Sans la +1, on obtient une erreur Index out of range
     
     graph_acm = Graph(range(1,n+1)) #acm = arbre couvrant minimum
     for power_min, node1, node2 in aretes:
         if uf.union(node1, node2):
-            graph_acm.add_edge(node1, node2, power_min)
+            graph_acm.add_edge(node1, node2, power_min) #On ajoute les aretes ssi cela ne crée pas de cycle dans le graphe
     
     return graph_acm
 

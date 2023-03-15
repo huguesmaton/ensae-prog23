@@ -5,6 +5,8 @@ data_path = "input/"
 file_name1 = "network.1.in"
 file_name2 = "routes.1.in"
 
+
+#QUESTION 10 : On commence par transformer les fichiers routes.x.in en liste
 def route_from_file(filename):
 
     trajets = []
@@ -21,13 +23,13 @@ def route_from_file(filename):
 
 
 
-
+#On utilise le module time et on appelle la fonction min_power
 def calcul_temps_min_power(): #Pour le network.1
 
     g = graph_from_file(data_path + file_name1)
     trajets = route_from_file(data_path + file_name2)
     nb_trajets = len(trajets)
-    trajets = trajets[0:10]
+    trajets = trajets[0:10] #Comme suggéré dans l'énoncé, on calcul le temps pour quelques trajets seulement puis on fait une moyenne
     t0 = perf_counter()
     for trajet in trajets:
         src, dest = trajet[0], trajet[1]
@@ -36,6 +38,7 @@ def calcul_temps_min_power(): #Pour le network.1
     temps_moy = (t1 - t0)/10
     temps_tot = temps_moy * nb_trajets
     print(temps_tot)
+#Pour le network1, on obtient un temps moyen de 40 secondes. En revanche pour les autres network on n'obtient pas de résultat car les fonctions ne sont pas optimisées, d'où les questions suivantes
 
 
 def calcul_temps_min_power_acm_naif(): #Pour le network.1
@@ -52,6 +55,8 @@ def calcul_temps_min_power_acm_naif(): #Pour le network.1
     temps_moy = (t1 - t0)/10
     temps_tot = temps_moy * nb_trajets
     print(temps_tot)
+#Pour le network1, on a divisé le temps par 2, mais on n'a toujours pas de résulat pour les autres network
+
 
 
 def calcul_temps_min_power_acm(): #Pour le network.1
@@ -70,4 +75,4 @@ def calcul_temps_min_power_acm(): #Pour le network.1
     print(temps_tot)
 
 
-calcul_temps_min_power_acm()
+calcul_temps_min_power_acm_naif()
