@@ -2,8 +2,8 @@ from graph import Graph, graph_from_file, UnionFind, kruskal
 from time import perf_counter
 
 data_path = "input/"
-file_name1 = "network.2.in"
-file_name2 = "routes.2.in"
+file_name1 = "network.1.in"
+file_name2 = "routes.1.in"
 
 
 #QUESTION 10 : On commence par transformer les fichiers routes.x.in en liste
@@ -38,7 +38,7 @@ def calcul_temps_min_power(): #Pour le network.1
     temps_moy = (t1 - t0)/10
     temps_tot = temps_moy * nb_trajets
     print(temps_tot)
-#Pour le network1, on obtient un temps moyen de 40 secondes. En revanche pour les autres network on n'obtient pas de résultat car les fonctions ne sont pas optimisées, d'où les questions suivantes
+#Pour le network1, on obtient un temps moyen sous la seconde. En revanche pour les autres network on n'obtient pas de résultat car les fonctions ne sont pas optimisées, d'où les questions suivantes
 
 
 def calcul_temps_min_power_acm_naif(): #Pour le network.1

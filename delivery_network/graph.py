@@ -269,7 +269,7 @@ def dichotomie(g, gauche, droite, src, dest): #Fonction dichotomie qui prend en 
     return g.get_path_with_power(src, dest, droite), droite
 
 
-#Pour la question 14 :
+#Pour la question14 qui optimise la question3 :
 def parcours_largeur(g, src, dst, power):
     deja_visites = set()
     queue = [[src]]
