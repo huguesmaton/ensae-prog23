@@ -75,4 +75,32 @@ def calcul_temps_min_power_acm():
     print(temps_tot)
 
 
-calcul_temps_min_power_acm_naif()
+
+def calcul_temps_kruskal(): #On obtient un temps de l'ordre de la seconde pour les gros graphes
+
+    g = graph_from_file(data_path + file_name1)
+    t0 = perf_counter()
+    kruskal(g)
+    t1 = perf_counter()
+    print(t1 - t0)
+
+
+
+def calcul_temps_min_get_path_with_power_largeur(): #On obtient un temps de l'ordre de la seconde pour les gros graphes
+    
+    g = graph_from_file(data_path + file_name1)
+    g = kruskal(g)
+    trajets = route_from_file(data_path + file_name2)
+    nb_trajets = len(trajets)
+    trajets = trajets[0:10]
+    t0 = perf_counter()
+    for trajet in trajets:
+        src, dest = trajet[0], trajet[1]
+        g.get_path_with_power_largeur(src, dest, power=1000000)
+    t1 = perf_counter()
+    temps_moy = (t1 - t0)/10
+    temps_tot = temps_moy * nb_trajets
+    print(temps_tot)
+
+
+calcul_temps_min_power_acm()
