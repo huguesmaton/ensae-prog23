@@ -75,7 +75,7 @@ class Graph:
     def get_path_with_power(self, src, dest, power):
         deja_visites = []
 
-        return chemins(src, [src]) #On appelle chemins sur le noeud source (voir en bas les fonctions auxiliaires)
+        return chemins(self, src, [src], dest, deja_visites, power) #On appelle chemins sur le noeud source (voir en bas les fonctions auxiliaires)
 #Chaque noeud est parcouru une seule fois donc la compléxité est en O(nb_nodes)
     
 
@@ -87,7 +87,7 @@ class Graph:
 
         for node1 in self.nodes: #On parcours le graphe : on effectue un parcours en profondeur a partir d'un noeud ssi le noeud n'a pas encore été visité
             if node1 not in deja_visites:
-                composantes_connexes.append(parcours_profondeur(node1)) #On appelle une fonction auxiliare (voir en bas)
+                composantes_connexes.append(parcours_profondeur(self, node1, deja_visites)) #On appelle une fonction auxiliare (voir en bas)
         return composantes_connexes
 #Ainsi chaque noeud est parcouru une unique fois, la complexité est donc en O(nb_nodes)
 
@@ -115,7 +115,8 @@ class Graph:
             gauche = 2**(n-1)
             droite = 2**n
             
-        return dichotomie(gauche, droite) #On appelle la dichotomie sur les valeurs initialisés (voir fonctions auxiliaires en bas)
+        return dichotomie(self, gauche, droite, src, dest) #On appelle la dichotomie sur les valeurs initialisés (voir fonctions auxiliaires en bas)
+
 #La dichotomie est en O(log(droite - gauche)). On commence par chercher le bon intervalle de la forme [2**(n-1), 2**n] en appelant la fonction get_path_with_power. 
 #Donc c'est un O(n), ou n est tq 2**n > puissance max dans le graphe > 2**(n-1).
 #Mais ici on appelle get_path_with_power dans la dichotomie donc la compléxité est O(n*nb_nodes).
@@ -224,35 +225,35 @@ def kruskal(graph):
 #FONCTIONS AUXILIAIRES
 
 #Pour la question3 :
-def chemins(node1, chemin): #Fonction récursive qui porend en argument un noeud et le chemin suivi pour arriver jusqu'à ce noeud
+def chemins(g, node1, chemin, dest, deja_visites, power): #Fonction récursive qui porend en argument un noeud et le chemin suivi pour arriver jusqu'à ce noeud ainsi que le noeud destination et la liste des noeuds visites et la power
     if node1 == dest: #Si le node1 est la destination alors c'est fini
         return chemin
-    for triple in self.graph[node1]: #On parcours les voisins de node1
+    for triple in g.graph[node1]: #On parcours les voisins de node1
         node2, power_min, dist = triple
-            if node2 not in deja_visites and power_min <= power: #On vérifie les conditions, notamment sur la puissance minimale
+        if node2 not in deja_visites and power_min <= power: #On vérifie les conditions, notamment sur la puissance minimale
             deja_visites.append(node2)
-            cheminrec = chemins(node2, chemin+[node2]) #On appelle récursivement la fonction sur chaque voisin
+            cheminrec = chemins(g, node2, chemin+[node2], dest, deja_visites, power) #On appelle récursivement la fonction sur chaque voisin
             if cheminrec is not None:
                 return cheminrec
-    return None #Si tout les voisisns, et donc recursivement tous les noeuds de la composante connexe du noeud node1, alors il n'y a pas de chemin possible, on renvoie None
+    return None #Si tout les voisisns ont été visité, et donc recursivement tous les noeuds de la composante connexe du noeud node1, alors il n'y a pas de chemin possible, on renvoie None
 
 #Pour la question2 :
-def parcours_profondeur(node1): #On écrit une fonction parcours en profondeur
+def parcours_profondeur(g, node1, deja_visites): #On écrit une fonction parcours en profondeur
     composante_node1 = [node1]
-    for triple in self.graph[node1]:
+    for triple in g.graph[node1]:
         node2 = triple[0]
         if node2 not in deja_visites:
             deja_visites.append(node2)
-            composante_node1 += parcours_profondeur(node2)
+            composante_node1 += parcours_profondeur(g, node2, deja_visites)
     return composante_node1
 
 #Pour la question6 :
-def dichotomie(gauche, droite): #Fonction dichotomie qui prend en argument la borne inf et sup d'un intervalle
+def dichotomie(g, gauche, droite, src, dest): #Fonction dichotomie qui prend en argument la borne inf et sup d'un intervalle
     while abs(droite - gauche) > 1: #On souhaite droite = gauche
         milieu = (droite + gauche)/2 #On travaille avec gauche et droite puissances de 2 donc milieu est toujours un entier
-        if self.get_path_with_power(src, dest, milieu) != None:
+        if g.get_path_with_power(src, dest, milieu) != None:
             droite = milieu
         else:
             gauche = milieu
-        dichotomie(gauche,droite)
-    return self.get_path_with_power(src, dest, droite), droite
+        dichotomie(g, gauche, droite, src, dest)
+    return g.get_path_with_power(src, dest, droite), droite
