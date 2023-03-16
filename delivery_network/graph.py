@@ -41,7 +41,7 @@ class Graph:
         return output
 
 
-#QUESTION 1 partie 1 : Solution du professeur
+    #QUESTION 1 partie 1 : Solution du professeur
     def add_edge(self, node1, node2, power_min, dist=1):
         """
         Adds an edge to the graph. Graphs are not oriented, hence an edge is added to the adjacency list of both end nodes. 
@@ -71,16 +71,16 @@ class Graph:
         self.nb_edges += 1
     
 
-#QUESTION 3 : 
+    #QUESTION 3 : 
     def get_path_with_power(self, src, dest, power):
         deja_visites = []
 
         return chemins(self, src, [src], dest, deja_visites, power) #On appelle chemins sur le noeud source (voir en bas les fonctions auxiliaires)
-#Chaque noeud est parcouru une seule fois donc la compléxité est en O(nb_nodes)
+    #Chaque noeud est parcouru une seule fois donc la compléxité est en O(nb_nodes)
     
 
 
-#QUESTION 2 : On commence par écrire une fonction connected_componenents qui renvoie la liste des composantes connexes d'un graphe
+    #QUESTION 2 : On commence par écrire une fonction connected_componenents qui renvoie la liste des composantes connexes d'un graphe
     def connected_components(self):
         composantes_connexes = []
         deja_visites = []
@@ -89,9 +89,9 @@ class Graph:
             if node1 not in deja_visites:
                 composantes_connexes.append(parcours_profondeur(self, node1, deja_visites)) #On appelle une fonction auxiliare (voir en bas)
         return composantes_connexes
-#Ainsi chaque noeud est parcouru une unique fois, la complexité est donc en O(nb_nodes)
+        #Ainsi chaque noeud est parcouru une unique fois, la complexité est donc en O(nb_nodes)
 
-#Cette fonction transforme la liste des composantes connéctées en frozenset
+    #Cette fonction transforme la liste des composantes connéctées en frozenset
     def connected_components_set(self):
         """
         The result should be a set of frozensets (one per component), 
@@ -100,7 +100,7 @@ class Graph:
         return set(map(frozenset, self.connected_components()))
     
 
-#QUESTION 6 : 
+    #QUESTION 6 : 
     def min_power(self, src, dest):
         """
         Should return path, min_power. 
@@ -117,24 +117,42 @@ class Graph:
             
         return dichotomie(self, gauche, droite, src, dest) #On appelle la dichotomie sur les valeurs initialisés (voir fonctions auxiliaires en bas)
 
-#La dichotomie est en O(log(droite - gauche)). On commence par chercher le bon intervalle de la forme [2**(n-1), 2**n] en appelant la fonction get_path_with_power. 
-#Donc c'est un O(n), ou n est tq 2**n > puissance max dans le graphe > 2**(n-1).
-#Mais ici on appelle get_path_with_power dans la dichotomie donc la compléxité est O(n*nb_nodes).
-#Pour nb_nodes grand, la compléxité de ce while est un O(nb_nodes) car on va l'appeller k fois et si nb_nodes est grand O(k*nb_nodes) = O(nb_nodes).
-#La compléxité est donc un O(n*nb_nodes + nb_nodes) = O(nb_nodes) pour nb_nodes grand. 
-#REMARQUE : on aurait pu faire la dichotomie sur la liste triée des puissances. Dans le MEILLEUR des cas si le graphe est connexe, le nombre d'aretes est de l'ordre du nombre
-#de noeud et donc trier cette liste est de compléxité O(nb_nodes*log(nb_nodes)). Ceci étant pour le meilleur des cas, on voit bien que cette méthode n'est pas optimale
+    #La dichotomie est en O(log(droite - gauche)). On commence par chercher le bon intervalle de la forme [2**(n-1), 2**n] en appelant la fonction get_path_with_power. 
+    #Donc c'est un O(n), ou n est tq 2**n > puissance max dans le graphe > 2**(n-1).
+    #Mais ici on appelle get_path_with_power dans la dichotomie donc la compléxité est O(n*nb_nodes).
+    #Pour nb_nodes grand, la compléxité de ce while est un O(nb_nodes) car on va l'appeller k fois et si nb_nodes est grand O(k*nb_nodes) = O(nb_nodes).
+    #La compléxité est donc un O(n*nb_nodes + nb_nodes) = O(nb_nodes) pour nb_nodes grand. 
+    #REMARQUE : on aurait pu faire la dichotomie sur la liste triée des puissances. Dans le MEILLEUR des cas si le graphe est connexe, le nombre d'aretes est de l'ordre du nombre
+    #de noeud et donc trier cette liste est de compléxité O(nb_nodes*log(nb_nodes)). Ceci étant pour le meilleur des cas, on voit bien que cette méthode n'est pas optimale
     
 
-#QUESTION 14 : Première version naive ou on utilise les fonctions precedentes (non optimisées pour des MST) sur le MST donné par kruskal
-#Ce n'est toujours pas satisfaisant cf fichier temps.py fonction calcul_temps_min_power_acm_naif
+    #QUESTION 14 : Première version naive ou on utilise les fonctions precedentes (non optimisées pour des MST) sur le MST donné par kruskal
+    #Ce n'est toujours pas satisfaisant cf fichier temps.py fonction calcul_temps_min_power_acm_naif
     def min_power_acm_naif(self, src, dest):
         self = kruskal(self)
         return self.min_power(src, dest)
-    
-    
+
+    #QUESTION 14 optimisation :
+    def get_path_with_power_largeur(self, src, dest, power): #Ici on effectue un parcours en largeur plutot que un parcours en profondeur
+        return parcours_largeur(self, src, dest, power)
 
 
+    def min_power_largeur(self, src, dest): #On réutilise la min_power de la question 6 en utilisant get_path_with_power_acm
+        n = 1
+        gauche = 0
+        droite = 2
+
+        while self.get_path_with_power_largeur(src, dest, droite) == None: 
+            n += 1
+            gauche = 2**(n-1)
+            droite = 2**n
+            
+        return dichotomie(self, gauche, droite, src, dest)
+
+
+    def min_power_acm(self, src, dest): #Finalement, on definit cette fonction qui est optimisé pour les arbres
+        self = kruskal(self)
+        return self.min_power_largeur(src, dest)
 
 
 #QUESTION 1 partie 2 et QUESTION 4: Solution du professeur
@@ -221,13 +239,6 @@ def kruskal(graph):
     return graph_acm
 
 
-#QUESTION 14 :
-#def get_path_with_power_acm(self, src, dest, power): #Ici on effectue un parcours en largeur plutot que un parcours en profondeur
-
-
-
-#def power_min_acm(self, src, dest):
-
 
 
 #FONCTIONS AUXILIAIRES
@@ -270,7 +281,7 @@ def dichotomie(g, gauche, droite, src, dest): #Fonction dichotomie qui prend en 
 
 
 #Pour la question14 qui optimise la question3 :
-def parcours_largeur(g, src, dst, power):
+def parcours_largeur(g, src, dest, power):
     deja_visites = set()
     queue = [[src]]
     
@@ -289,9 +300,9 @@ def parcours_largeur(g, src, dst, power):
                     cheminbis.append(node2)
                     queue.append(cheminbis)
                 
-                if node2 == dest:
-                    return cheminbis
+                    if node2 == dest:
+                        return cheminbis
             
-            visited.add(node1)
+            deja_visites.add(node1)
     
     return None

@@ -24,7 +24,7 @@ def route_from_file(filename):
 
 
 #On utilise le module time et on appelle la fonction min_power
-def calcul_temps_min_power(): #Pour le network.1
+def calcul_temps_min_power():
 
     g = graph_from_file(data_path + file_name1)
     trajets = route_from_file(data_path + file_name2)
@@ -41,7 +41,7 @@ def calcul_temps_min_power(): #Pour le network.1
 #Pour le network1, on obtient un temps moyen sous la seconde. En revanche pour les autres network on n'obtient pas de résultat car les fonctions ne sont pas optimisées, d'où les questions suivantes
 
 
-def calcul_temps_min_power_acm_naif(): #Pour le network.1
+def calcul_temps_min_power_acm_naif():
 
     g = graph_from_file(data_path + file_name1)
     trajets = route_from_file(data_path + file_name2)
@@ -59,7 +59,7 @@ def calcul_temps_min_power_acm_naif(): #Pour le network.1
 
 
 
-def calcul_temps_min_power_acm(): #Pour le network.1
+def calcul_temps_min_power_acm():
 
     g = graph_from_file(data_path + file_name1)
     trajets = route_from_file(data_path + file_name2)
