@@ -221,11 +221,19 @@ def kruskal(graph):
     return graph_acm
 
 
+#QUESTION 14 :
+#def get_path_with_power_acm(self, src, dest, power): #Ici on effectue un parcours en largeur plutot que un parcours en profondeur
+
+
+
+#def power_min_acm(self, src, dest):
+
+
 
 #FONCTIONS AUXILIAIRES
 
 #Pour la question3 :
-def chemins(g, node1, chemin, dest, deja_visites, power): #Fonction récursive qui porend en argument un noeud et le chemin suivi pour arriver jusqu'à ce noeud ainsi que le noeud destination et la liste des noeuds visites et la power
+def chemins(g, node1, chemin, dest, deja_visites, power): #Fonction récursive qui prend en argument un noeud et le chemin suivi pour arriver jusqu'à ce noeud ainsi que le noeud destination et la liste des noeuds visites et la power
     if node1 == dest: #Si le node1 est la destination alors c'est fini
         return chemin
     for triple in g.graph[node1]: #On parcours les voisins de node1
@@ -237,6 +245,7 @@ def chemins(g, node1, chemin, dest, deja_visites, power): #Fonction récursive q
                 return cheminrec
     return None #Si tout les voisisns ont été visité, et donc recursivement tous les noeuds de la composante connexe du noeud node1, alors il n'y a pas de chemin possible, on renvoie None
 
+
 #Pour la question2 :
 def parcours_profondeur(g, node1, deja_visites): #On écrit une fonction parcours en profondeur
     composante_node1 = [node1]
@@ -246,6 +255,7 @@ def parcours_profondeur(g, node1, deja_visites): #On écrit une fonction parcour
             deja_visites.append(node2)
             composante_node1 += parcours_profondeur(g, node2, deja_visites)
     return composante_node1
+
 
 #Pour la question6 :
 def dichotomie(g, gauche, droite, src, dest): #Fonction dichotomie qui prend en argument la borne inf et sup d'un intervalle
@@ -257,3 +267,31 @@ def dichotomie(g, gauche, droite, src, dest): #Fonction dichotomie qui prend en 
             gauche = milieu
         dichotomie(g, gauche, droite, src, dest)
     return g.get_path_with_power(src, dest, droite), droite
+
+
+#Pour la question 14 :
+def parcours_largeur(g, src, dst, power):
+    deja_visites = set()
+    queue = [[src]]
+    
+    if src == dest:
+        return [src]
+
+    while queue:
+        chemin = queue.pop(0)
+        node1 = chemin[-1]
+
+        if node1 not in deja_visites:
+            triple = g.graph[node1]
+            for node2, power_min, dist in triple:
+                if power_min <= power:
+                    cheminbis = list(chemin)
+                    cheminbis.append(node2)
+                    queue.append(cheminbis)
+                
+                if node2 == dest:
+                    return cheminbis
+            
+            visited.add(node1)
+    
+    return None
