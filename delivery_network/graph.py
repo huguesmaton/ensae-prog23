@@ -1,3 +1,5 @@
+import numpy as np
+
 class Graph:
     """
     A class representing graphs as adjacency lists and implementing various algorithms on the graphs. Graphs in the class are not oriented. 
@@ -165,9 +167,9 @@ class Graph:
     
 
     def min_power_opti(self, src, dest):
-        chemin, power = get_path_with_power_largeur_rec(self, src, dest, power = np.inf)
+        power = np.inf
         
-        return chemin, power
+        return get_path_with_power_largeur_rec(self, src, dest, power)
 
 
 
