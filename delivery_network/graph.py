@@ -147,12 +147,27 @@ class Graph:
             gauche = 2**(n-1)
             droite = 2**n
             
-        return dichotomie(self, gauche, droite, src, dest)
+        return dichotomie_largeur(self, gauche, droite, src, dest)
 
 
     def min_power_acm(self, src, dest): #Finalement, on definit cette fonction qui est optimisé pour les arbres
         self = kruskal(self)
         return self.min_power_largeur(src, dest)
+    
+    
+
+    def get_path_with_power_largeur_rec(self, src, dest, power):
+        chemin = []
+        deja_visites = []
+        parcours_largeur_rec(self, src, dest, chemin, deja_visites, power)
+        return chemin
+    
+
+    def min_power_opti(self, src, dest):
+        chemin = get_path_with_power_largeur_rec(self, src, dest, power = np.inf)
+        powers = []
+        
+
 
 
 #QUESTION 1 partie 2 et QUESTION 4: Solution du professeur
@@ -279,6 +294,16 @@ def dichotomie(g, gauche, droite, src, dest): #Fonction dichotomie qui prend en 
         dichotomie(g, gauche, droite, src, dest)
     return g.get_path_with_power(src, dest, droite), droite
 
+def dichotomie_largeur(g, gauche, droite, src, dest): #Fonction dichotomie qui prend en argument la borne inf et sup d'un intervalle
+    while abs(droite - gauche) > 1: #On souhaite droite = gauche
+        milieu = (droite + gauche)/2 #On travaille avec gauche et droite puissances de 2 donc milieu est toujours un entier
+        if g.get_path_with_power_largeur(src, dest, milieu) != None:
+            droite = milieu
+        else:
+            gauche = milieu
+        dichotomie_largeur(g, gauche, droite, src, dest)
+    return g.get_path_with_power_largeur(src, dest, droite), droite
+
 
 #Pour la question14 qui optimise la question3 :
 def parcours_largeur(g, src, dest, power):
@@ -306,3 +331,16 @@ def parcours_largeur(g, src, dest, power):
             deja_visites.add(node1)
     
     return None
+
+def parcours_largeur_rec(g, node1, dest, chemin, deja_visites, power):
+    deja_visites.append(node1)
+    chemin.append(node1)
+    if node1 == dest:
+        return True
+    for triple in g.graph[node1]:
+        node2, power_min, dist = triple
+        if node2 not in deja_visites and power_min < power:
+            if parcours_largeur_rec(g, node2, dest, chemin, deja_visites, power):
+                return True
+    chemin.pop()
+    return False
