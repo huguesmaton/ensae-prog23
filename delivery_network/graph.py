@@ -158,15 +158,17 @@ class Graph:
 
     def get_path_with_power_largeur_rec(self, src, dest, power):
         chemin = []
-        deja_visites = []
-        parcours_largeur_rec(self, src, dest, chemin, deja_visites, power)
-        return chemin
+        deja_visites = set()
+        booleen, power = parcours_largeur_rec(self, src, dest, chemin, deja_visites, power)
+        
+        return chemin, power
     
 
     def min_power_opti(self, src, dest):
-        chemin = get_path_with_power_largeur_rec(self, src, dest, power = np.inf)
-        powers = []
+        chemin, power = get_path_with_power_largeur_rec(self, src, dest, power = np.inf)
         
+        return chemin, power
+
 
 
 
@@ -333,14 +335,15 @@ def parcours_largeur(g, src, dest, power):
     return None
 
 def parcours_largeur_rec(g, node1, dest, chemin, deja_visites, power):
-    deja_visites.append(node1)
+    deja_visites.add(node1)
     chemin.append(node1)
     if node1 == dest:
-        return True
+        return True, 0
     for triple in g.graph[node1]:
         node2, power_min, dist = triple
-        if node2 not in deja_visites and power_min < power:
-            if parcours_largeur_rec(g, node2, dest, chemin, deja_visites, power):
-                return True
+        if node2 not in deja_visites and power_min <= power:
+            dest_trouvee, maxpower = parcours_largeur_rec(g, node2, dest, chemin, deja_visites, power)
+            if dest_trouvee:
+                return True, max(maxpower, power_min)
     chemin.pop()
-    return False
+    return False, 0

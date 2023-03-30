@@ -11,5 +11,4 @@ gtest = graph_from_file("input/network.05.in")
 
 print(g.graph)
 print(g.graph[5])
-
-#print(kruskal(gtest))
+print(g.graph[5])
