@@ -167,6 +167,7 @@ class Graph:
     '''
 
     def min_power_opti(self, src, dest):
+        self = kruskal(self)
         power = np.inf
         chemin = []
         deja_visites = set()

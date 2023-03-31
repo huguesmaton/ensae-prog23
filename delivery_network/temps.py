@@ -3,8 +3,8 @@ from time import perf_counter
 import numpy as np
 
 data_path = "input/"
-file_name1 = "network.4.in"
-file_name2 = "routes.4.in"
+file_name1 = "network.3.in"
+file_name2 = "routes.3.in"
 
 
 #QUESTION 10 : On commence par transformer les fichiers routes.x.in en liste
@@ -108,7 +108,7 @@ def calcul_temps_min_get_path_with_power_largeur():
 def calcul_temps_min_get_path_with_power_largeur_rec(): 
     num_trajets = 20
     g = graph_from_file(data_path + file_name1)
-    g = kruskal(g)
+    #g = kruskal(g)
     trajets = route_from_file(data_path + file_name2)
     nb_trajets = len(trajets)
     trajets = trajets[0:num_trajets]
@@ -122,7 +122,24 @@ def calcul_temps_min_get_path_with_power_largeur_rec():
     temps_tot = temps_moy * nb_trajets
     print(temps_tot)
 
-
+def calcul_temps_parcours_largeur_rec(): 
+    num_trajets = 20
+    g = graph_from_file(data_path + file_name1)
+    #g = kruskal(g)
+    trajets = route_from_file(data_path + file_name2)
+    nb_trajets = len(trajets)
+    trajets = trajets[0:num_trajets]
+    power = np.inf
+    chemin = []
+    deja_visites = set()
+    t0 = perf_counter()
+    for trajet in trajets:
+        src, dest = trajet[0], trajet[1]
+        parcours_largeur_rec(g, src, dest, chemin, deja_visites, power)
+    t1 = perf_counter()
+    temps_moy = (t1 - t0)/num_trajets
+    temps_tot = temps_moy * nb_trajets
+    print(temps_tot)
 
 
 
@@ -147,4 +164,6 @@ def calcul_temps_min_power_opti():
 
 
 
-calcul_temps_min_power_opti()
+#calcul_temps_min_power_opti()
+#calcul_temps_kruskal()
+calcul_temps_parcours_largeur_rec()
