@@ -1,10 +1,10 @@
-from graph import Graph, graph_from_file, UnionFind, kruskal
+from graph import *
 from time import perf_counter
 import numpy as np
 
 data_path = "input/"
-file_name1 = "network.1.in"
-file_name2 = "routes.1.in"
+file_name1 = "network.4.in"
+file_name2 = "routes.4.in"
 
 
 #QUESTION 10 : On commence par transformer les fichiers routes.x.in en liste
@@ -131,7 +131,7 @@ def calcul_temps_min_get_path_with_power_largeur_rec():
 
 def calcul_temps_min_power_opti():
 
-    num_trajets = 20
+    num_trajets = 50
     g = graph_from_file(data_path + file_name1)
     trajets = route_from_file(data_path + file_name2)
     nb_trajets = len(trajets)

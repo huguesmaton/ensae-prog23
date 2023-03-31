@@ -157,19 +157,22 @@ class Graph:
         return self.min_power_largeur(src, dest)
     
     
-
+    '''
     def get_path_with_power_largeur_rec(self, src, dest, power):
         chemin = []
         deja_visites = set()
         booleen, power = parcours_largeur_rec(self, src, dest, chemin, deja_visites, power)
         
         return chemin, power
-    
+    '''
 
     def min_power_opti(self, src, dest):
         power = np.inf
+        chemin = []
+        deja_visites = set()
+        booleen, power = parcours_largeur_rec(self, src, dest, chemin, deja_visites, power)
         
-        return get_path_with_power_largeur_rec(self, src, dest, power)
+        return chemin, power
 
 
 
