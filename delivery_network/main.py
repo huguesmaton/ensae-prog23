@@ -8,4 +8,4 @@ g = graph_from_file(data_path + file_name)
 
 g = graph_from_file("input/network.04.in")
 print(g.graph)
-print(g.graph[1][1][2])
+print(kruskal(g).graph)

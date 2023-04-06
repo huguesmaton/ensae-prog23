@@ -44,7 +44,7 @@ class Graph:
 
 
     #QUESTION 1 partie 1 : Solution du professeur
-    def add_edge(self, node1, node2, power_min, dist):
+    def add_edge(self, node1, node2, power_min, dist=1):
         """
         Adds an edge to the graph. Graphs are not oriented, hence an edge is added to the adjacency list of both end nodes. 
 

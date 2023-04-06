@@ -6,6 +6,8 @@ from graph import graph_from_file, kruskal
 import unittest   # The test framework
 
 class Test_MST(unittest.TestCase):
+
+    #Tests implémentés par le professeur
     def test_network00(self):
         g = graph_from_file("input/network.00.in")
         g_mst = kruskal(g)
@@ -30,6 +32,38 @@ class Test_MST(unittest.TestCase):
                         4: [(1, 4, 1)],
                         }
         self.assertEqual(g_mst.graph, mst_expected)
+    
+    #Tests ajoutés
+    def test_network03(self):
+        g = graph_from_file("input/network.03.in")
+        g_mst = kruskal(g)
+        mst_expected = {1: [(2, 10, 1)], 
+                        2: [(3, 4, 1), (1, 10, 1)], 
+                        3: [(2, 4, 1), (4, 4, 1)], 
+                        4: [(3, 4, 1)], 
+                        5: [], 
+                        6: [], 
+                        7: [], 
+                        8: [], 
+                        9: [], 
+                        10: []}
+        self.assertEqual(g_mst.graph, mst_expected)
+    
+    def test_network04(self):
+        g = graph_from_file("input/network.04.in")
+        g_mst = kruskal(g)
+        mst_expected = {1: [(2, 4, 1)], 
+                        2: [(1, 4, 1), (3, 4, 1)], 
+                        3: [(2, 4, 1), (4, 4, 1)], 
+                        4: [(3, 4, 1)], 
+                        5: [], 
+                        6: [], 
+                        7: [], 
+                        8: [], 
+                        9: [], 
+                        10: []}
+        self.assertEqual(g_mst.graph, mst_expected)
+
 
 if __name__ == '__main__':
     unittest.main()

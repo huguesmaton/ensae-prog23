@@ -3,8 +3,8 @@ from time import perf_counter
 import numpy as np
 
 data_path = "input/"
-file_name1 = "network.3.in"
-file_name2 = "routes.3.in"
+file_name1 = "network.2.in"
+file_name2 = "routes.2.in"
 
 
 #QUESTION 10 : On commence par transformer les fichiers routes.x.in en liste
@@ -30,13 +30,13 @@ def calcul_temps_min_power():
     g = graph_from_file(data_path + file_name1)
     trajets = route_from_file(data_path + file_name2)
     nb_trajets = len(trajets)
-    trajets = trajets[0:10] #Comme suggéré dans l'énoncé, on calcul le temps pour quelques trajets seulement puis on fait une moyenne
+    trajets = trajets[0:50] #Comme suggéré dans l'énoncé, on calcul le temps pour quelques trajets seulement puis on fait une moyenne
     t0 = perf_counter()
     for trajet in trajets:
         src, dest = trajet[0], trajet[1]
         g.min_power(src, dest)
     t1 = perf_counter()
-    temps_moy = (t1 - t0)/10
+    temps_moy = (t1 - t0)/50
     temps_tot = temps_moy * nb_trajets
     print(temps_tot)
 #Pour le network1, on obtient un temps moyen sous la seconde. En revanche pour les autres network on n'obtient pas de résultat car les fonctions ne sont pas optimisées, d'où les questions suivantes
@@ -166,4 +166,4 @@ def calcul_temps_min_power_opti():
 
 #calcul_temps_min_power_opti()
 #calcul_temps_kruskal()
-calcul_temps_parcours_largeur_rec()
+calcul_temps_min_power()
