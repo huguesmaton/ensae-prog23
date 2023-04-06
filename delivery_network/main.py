@@ -4,36 +4,91 @@ from graph import *
 numero = 1
 budget = 25*(10**9)
 filename = "input/trucks." + str(numero) + ".in"
+g = graph_from_file("input/network." + str(numero) + ".in")
+g = kruskal(g)
 trucks = trucks_from_file(filename)
 trips = routes_out(numero)
 
+#Fonction qui sélectionne seulement les camions utiles :
+#On retire les camions avec une puissance plus faible mais un cout plus grand par comparaison à un autre camion
+def camions_utiles(trucks): 
+    trucks.sort(key=lambda camions_utiles : camions_utiles[1]) #Tri par cout croissant
+    utiles = []
+    power = 0 
+    for truck in trucks:
+        if power < truck[0]: #Les camions étant triés par cout croissant, on ne prend pas les camions avec une puissance plus faible
+            utiles.append(truck)
+            power = truck[0]
+    return utiles
+    #print(len(trucks), len(camions_utiles(trucks))) renvoie (10000,185) donc cette fonction est très importante
 
 def algo_glouton(trucks, trips, budget):
-    # Tri des camions par coût croissant et par puissance décroissante
-    sorted_trucks = sorted(trucks, key=lambda t: (t[1], -t[0]))
-    print(sorted_trucks[:10])
-    # Tri des trajets par profit décroissant
-    sorted_trips = sorted(trips, key=lambda t: t[2], reverse=True)
-    print(sorted_trips[:10])
-    assignments = []
-    total_profit = 0
+
+    trucks = camions_utiles(trucks)
+    # trier les camions par puissance décroissante
+    trucks = sorted(trucks, key=lambda t: t[0], reverse=True)
     
-    for trip in sorted_trips:
-        # Recherche du camion le moins cher qui peut effectuer le trajet
-        assigned_truck = None
-        for truck in sorted_trucks:
-            if truck[0] >= trip[3] and (total_profit + trip[2] - truck[1] <= budget):
-                assigned_truck = truck
+    # trier les routes par profit décroissant
+    trips = sorted(trips, key=lambda r: r[2], reverse=True)
+    
+    assigned_trucks = {}
+    assigned_budget = 0
+    
+    for route in trips: #On parcourt les trajet et pour chaque trajet, on choisit le meilleur camion
+        start, end, profit, power_min = route
+        
+        for truck in trucks:
+            power, cost = truck
+            
+            if power >= power_min and assigned_budget + cost <= budget:
+                assigned_trucks[(start, end)] = truck
+                assigned_budget += cost
                 break
-        if assigned_truck:
-            # Ajout de l'attribution à la liste des attributions
-            assignments.append((assigned_truck, trip))
-            # Mise à jour du profit total
-            total_profit += trip[2] - assigned_truck[1]
-            # Suppression des camions plus puissants pour éviter leur utilisation future
-            sorted_trucks = [t for t in sorted_trucks if t[0] < assigned_truck[0]]
-    
-    return assignments
+        
+    return assigned_trucks
+
+
+
+def algo_knapsack(camion_list, trajet_list, budget):
+
+    camion_list = camions_utiles(trucks)
+    # Tri des trajets par profit décroissant
+    trajet_list = sorted(trajet_list, key=lambda t: t[2], reverse=True)
+    # Initialisation de la matrice de programmation dynamique
+    dp = [[0 for _ in range(budget + 1)] for _ in range(len(trajet_list) + 1)]
+    # Remplissage de la matrice de programmation dynamique
+    for i in range(1, len(trajet_list) + 1):
+        for j in range(budget + 1):
+            if camion_list:
+                if trajet_list[i-1][3] <= camion_list[0][0]:
+                    # Le camion le plus puissant peut satisfaire les besoins du trajet
+                    dp[i][j] = max(dp[i-1][j], trajet_list[i-1][2] + dp[i-1][j-camion_list[0][1]])
+                else:
+                    # Le camion le plus puissant ne peut pas satisfaire les besoins du trajet
+                    dp[i][j] = dp[i-1][j]
+            else:
+                dp[i][j] = dp[i-1][j]
+    # Récupération de la solution optimale
+    i = len(trajet_list)
+    j = budget
+    trucks_assigned = []
+    while i > 0 and j >= 0:
+        if dp[i][j] != dp[i-1][j]:
+            # Le trajet i a été satisfait
+            trucks_assigned.append((i-1, camion_list[0]))
+            j -= camion_list[0][1]
+            camion_list.pop(0)
+        i -= 1
+    trucks_assigned.reverse()
+    return trucks_assigned
+
+
+print(algo_knapsack(trucks, trips, budget))
+
+
+
+
+'''
 
 def algo_knapsack(trucks, trips, budget):
     # Création de la matrice des profits pour les objets et les poids du sac à dos
@@ -80,5 +135,4 @@ def algo_knapsack(trucks, trips, budget):
             i -= 1
     
     return assignments
-
-print(algo_knapsack(trucks, trips, budget))
+'''
