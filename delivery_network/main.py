@@ -31,7 +31,7 @@ def algo_glouton(trucks, trips, budget):
     # trier les routes par profit décroissant
     trips = sorted(trips, key=lambda r: r[2], reverse=True)
     
-    assigned_trucks = {}
+    assigned_trucks = {} #On renvoie un dictionnaire qui a un trajet (src, dest) assigne un camion (puissance, cout) 
     assigned_budget = 0
     
     for route in trips: #On parcourt les trajet et pour chaque trajet, on choisit le meilleur camion
@@ -83,7 +83,7 @@ def algo_knapsack(camion_list, trajet_list, budget):
     return trucks_assigned
 
 
-print(algo_knapsack(trucks, trips, budget))
+print(algo_glouton(trucks, trips, budget))
 
 
 
