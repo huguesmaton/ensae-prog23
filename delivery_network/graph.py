@@ -282,7 +282,10 @@ def parcours_largeur_rec(g, node1, dest, chemin, deja_visites, power):
     chemin.pop()
     return False, 0
 
+#QUESTION 18
 
+#Cette fonction prend en entrée les fichiers de type trucks.x.in et renvoie une liste de camions
+#La liste les puissances et couts de chaque camions
 def trucks_from_file(filename):
     camions = []
     with open(filename, "r") as file:
@@ -290,12 +293,30 @@ def trucks_from_file(filename):
         for _ in range(m):
             camion = list(map(int, file.readline().split()))
             if len(camion) == 2:
-                power, cout = trajet
-                trajets.append([power, cout])
+                power, cout = camion
+                camions.append([power, cout])
             else:
                 raise Exception("Format incorrect")
     return camions
 
+#Cette fonction, plutot que de créer un fichier routes.out.in comme conseillé, renvoie une liste
+#contenant les quadruplés [ville source, ville destination, profit (utilité), power_min pour faire le trajet]
+def routes_out(num):
+    numero = str(num)
+    data_path = "input/"
+    filename1 = "routes."
+    filename2 = "network."
+    g = graph_from_file(data_path + filename2 + numero + ".in")
+    kruskal(g) #On arborise notre graphe
+    trajets = route_from_file(data_path + filename1 + numero + ".in")
+    routes_out = []
+    for ville1, ville2, utilite in trajets[:100]: #On se limite aux 100 premiers trajets de chaque fichiers
+        routes_out.append([ville1, ville2, utilite, g.min_power_opti(ville1, ville2)])
+    return routes_out
+
+
+
+#QUESTION 7 bonus :
 def draw_graph(graph,chemin):
     dot = graphviz.Graph() #on crée un graphique à l'aide de la bibliothèque graphviz
     edges=[]
@@ -308,3 +329,19 @@ def draw_graph(graph,chemin):
     for u, v in zip(chemin, chemin[1:]):
         dot.edge(str(u), str(v), color='red') # on ajoute les arêtes que l'on souhaite colorier pour les mettre en évidence.
     return dot.render(format='png')
+
+
+#QUESTION 10 : On commence par transformer les fichiers routes.x.in en liste
+def route_from_file(filename):
+
+    trajets = []
+    with open(filename, "r") as file:
+        m = int(file.readline())
+        for _ in range(m):
+            trajet = list(map(int, file.readline().split()))
+            if len(trajet) == 3:
+                ville1, ville2, utilite = trajet
+                trajets.append([ville1, ville2, utilite])
+            else:
+                raise Exception("Format incorrect")
+    return trajets
