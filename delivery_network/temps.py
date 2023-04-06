@@ -156,7 +156,7 @@ def calcul_temps_min_power_opti():
     t0 = perf_counter()
     for trajet in trajets:
         src, dest = trajet[0], trajet[1]
-        g.min_power_opti(src, dest)
+        g.minpoweropti(src, dest)
     t1 = perf_counter()
     temps_moy = (t1 - t0)/num_trajets
     temps_tot = temps_moy * nb_trajets
@@ -164,6 +164,7 @@ def calcul_temps_min_power_opti():
 
 
 
-#calcul_temps_min_power_opti()
+#calcul_temps_min_power()
 #calcul_temps_kruskal()
-calcul_temps_min_power()
+calcul_temps_min_get_path_with_power_largeur_rec()
+#calcul_temps_min_power_opti()

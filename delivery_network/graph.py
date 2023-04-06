@@ -156,15 +156,21 @@ class Graph:
         return self.min_power_largeur(src, dest)
     
     
-    '''
+    
     def get_path_with_power_largeur_rec(self, src, dest, power):
         chemin = []
         deja_visites = set()
         booleen, power = parcours_largeur_rec(self, src, dest, chemin, deja_visites, power)
         
         return chemin, power
-    '''
+    
+    def min_power_opti(self, src, dest):
+        self = kruskal(self)
+        powermax = np.inf
+        _, power = self.get_path_with_power_largeur_rec(src, dest, powermax)
+        return power
 
+    '''
     def min_power_opti(self, src, dest):
         self = kruskal(self)
         power = np.inf
@@ -173,6 +179,7 @@ class Graph:
         booleen, power = parcours_largeur_rec(self, src, dest, chemin, deja_visites, power)
         
         return chemin, power
+    '''
 
 
 
