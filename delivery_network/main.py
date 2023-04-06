@@ -45,4 +45,4 @@ def algo_glouton(trucks, trips, budget):
         
     return assignations
 
-print(len(algo_glouton(trucks, trips, budget)))
+print(algo_glouton(trucks, trips, budget))
