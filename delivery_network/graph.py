@@ -78,8 +78,7 @@ class Graph:
         deja_visites = []
 
         return chemins(self, src, [src], dest, deja_visites, power) #On appelle chemins sur le noeud source (voir en bas les fonctions auxiliaires)
-    #Chaque noeud est parcouru une seule fois donc la compléxité est en O(nb_nodes)
-    
+    #Le graphe est parcouru une seule fois donc la compléxité est en O(V*E) dans le pire des cas
 
 
     #QUESTION 2 : On commence par écrire une fonction connected_componenents qui renvoie la liste des composantes connexes d'un graphe
@@ -91,7 +90,7 @@ class Graph:
             if node1 not in deja_visites:
                 composantes_connexes.append(parcours_profondeur(self, node1, deja_visites)) #On appelle une fonction auxiliare (voir en bas)
         return composantes_connexes
-        #Ainsi chaque noeud est parcouru une unique fois, la complexité est donc en O(nb_nodes)
+        #Ainsi chaque noeud est parcouru une unique fois, la complexité est donc en O(V + E))
 
     #Cette fonction transforme la liste des composantes connéctées en frozenset
     def connected_components_set(self):
