@@ -117,14 +117,6 @@ class Graph:
             droite = 2**n
             
         return dichotomie(self, gauche, droite, src, dest) #On appelle la dichotomie sur les valeurs initialisés (voir fonctions auxiliaires en bas)
-
-    #La dichotomie est en O(log(droite - gauche)). On commence par chercher le bon intervalle de la forme [2**(n-1), 2**n] en appelant la fonction get_path_with_power. 
-    #Donc c'est un O(n), ou n est tq 2**n > puissance max dans le graphe > 2**(n-1).
-    #Mais ici on appelle get_path_with_power dans la dichotomie donc la compléxité est O(n*nb_nodes).
-    #Pour nb_nodes grand, la compléxité de ce while est un O(nb_nodes) car on va l'appeller k fois et si nb_nodes est grand O(k*nb_nodes) = O(nb_nodes).
-    #La compléxité est donc un O(n*nb_nodes + nb_nodes) = O(nb_nodes) pour nb_nodes grand. 
-    #REMARQUE : on aurait pu faire la dichotomie sur la liste triée des puissances. Dans le MEILLEUR des cas si le graphe est connexe, le nombre d'aretes est de l'ordre du nombre
-    #de noeud et donc trier cette liste est de compléxité O(nb_nodes*log(nb_nodes)). Ceci étant pour le meilleur des cas, on voit bien que cette méthode n'est pas optimale
     
 
     #QUESTION 14 : Première version naive ou on utilise les fonctions precedentes (non optimisées pour des MST) sur le MST donné par kruskal
@@ -134,29 +126,6 @@ class Graph:
         return self.min_power(src, dest)
 
     #QUESTION 14 optimisation :
-    def get_path_with_power_largeur(self, src, dest, power): #Ici on effectue un parcours en largeur plutot que un parcours en profondeur
-        return parcours_largeur(self, src, dest, power)
-
-
-    def min_power_largeur(self, src, dest): #On réutilise la min_power de la question 6 en utilisant get_path_with_power_acm
-        n = 1
-        gauche = 0
-        droite = 2
-
-        while self.get_path_with_power_largeur(src, dest, droite) == None: 
-            n += 1
-            gauche = 2**(n-1)
-            droite = 2**n
-            
-        return dichotomie_largeur(self, gauche, droite, src, dest)
-
-
-    def min_power_acm(self, src, dest): #Finalement, on definit cette fonction qui est optimisé pour les arbres
-        self = kruskal(self)
-        return self.min_power_largeur(src, dest)
-    
-    
-    
     def get_path_with_power_largeur_rec(self, src, dest, power):
         chemin = []
         deja_visites = set()
@@ -165,21 +134,11 @@ class Graph:
         return chemin, power
     
     def min_power_opti(self, src, dest):
-        self = kruskal(self)
         powermax = np.inf
         _, power = self.get_path_with_power_largeur_rec(src, dest, powermax)
         return power
 
-    '''
-    def min_power_opti(self, src, dest):
-        self = kruskal(self)
-        power = np.inf
-        chemin = []
-        deja_visites = set()
-        booleen, power = parcours_largeur_rec(self, src, dest, chemin, deja_visites, power)
-        
-        return chemin, power
-    '''
+
 
 
 
@@ -308,44 +267,8 @@ def dichotomie(g, gauche, droite, src, dest): #Fonction dichotomie qui prend en 
         dichotomie(g, gauche, droite, src, dest)
     return g.get_path_with_power(src, dest, droite), droite
 
-def dichotomie_largeur(g, gauche, droite, src, dest): #Fonction dichotomie qui prend en argument la borne inf et sup d'un intervalle
-    while abs(droite - gauche) > 1: #On souhaite droite = gauche
-        milieu = (droite + gauche)/2 #On travaille avec gauche et droite puissances de 2 donc milieu est toujours un entier
-        if g.get_path_with_power_largeur(src, dest, milieu) != None:
-            droite = milieu
-        else:
-            gauche = milieu
-        dichotomie_largeur(g, gauche, droite, src, dest)
-    return g.get_path_with_power_largeur(src, dest, droite), droite
 
-
-#Pour la question14 qui optimise la question3 :
-def parcours_largeur(g, src, dest, power):
-    deja_visites = set()
-    queue = [[src]]
-    
-    if src == dest:
-        return [src]
-
-    while queue:
-        chemin = queue.pop(0)
-        node1 = chemin[-1]
-
-        if node1 not in deja_visites:
-            triple = g.graph[node1]
-            for node2, power_min, dist in triple:
-                if power_min <= power:
-                    cheminbis = list(chemin)
-                    cheminbis.append(node2)
-                    queue.append(cheminbis)
-                
-                    if node2 == dest:
-                        return cheminbis
-            
-            deja_visites.add(node1)
-    
-    return None
-
+#Pour la question14 qui optimise la question3 et qui renvoie également la puissance maximale rencontrée sur les aretes parcourues :
 def parcours_largeur_rec(g, node1, dest, chemin, deja_visites, power):
     deja_visites.add(node1)
     chemin.append(node1)
