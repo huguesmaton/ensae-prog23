@@ -6,6 +6,8 @@ import unittest
 from graph import Graph, graph_from_file
 
 class Test_GraphLoading(unittest.TestCase):
+
+    #Tests implémentés par le professeur
     def test_network0(self):
         g = graph_from_file("input/network.00.in")
         self.assertEqual(g.nb_nodes, 10)
@@ -21,6 +23,21 @@ class Test_GraphLoading(unittest.TestCase):
         self.assertEqual(g.nb_nodes, 10)
         self.assertEqual(g.nb_edges, 4)
         self.assertEqual(g.graph[1][0][2], 6)
+    
+
+    #Tests ajoutés :
+    def test_network2(self):
+        g = graph_from_file("input/network.02.in")
+        self.assertEqual(g.nb_nodes, 10)
+        self.assertEqual(g.nb_edges, 4)
+        self.assertEqual(g.graph[3][1][1], 4)
+
+    def test_network3(self):
+        g = graph_from_file("input/network.03.in")
+        self.assertEqual(g.nb_nodes, 10)
+        self.assertEqual(g.nb_edges, 4)
+        self.assertEqual(g.graph[6], [])  
+
 
 if __name__ == '__main__':
     unittest.main()

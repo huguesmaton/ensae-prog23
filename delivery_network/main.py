@@ -6,9 +6,6 @@ file_name = "network.01.in"
 
 g = graph_from_file(data_path + file_name)
 
-gtest = graph_from_file("input/network.05.in")
-#print(gtest.graph)
-
+g = graph_from_file("input/network.05.in")
 print(g.graph)
-print(g.graph[5])
-print(g.graph[5])
+print(g.get_path_with_power(1, 3, 2))
