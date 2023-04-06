@@ -1,11 +1,9 @@
-from graph import Graph, graph_from_file, kruskal
+from graph import *
 
 
 data_path = "input/"
-file_name = "network.01.in"
+file_name = "network.05.in"
 
 g = graph_from_file(data_path + file_name)
 
-g = graph_from_file("input/network.04.in")
-print(g.graph)
-print(kruskal(g).graph)
+draw_graph(g,[1,2,3])

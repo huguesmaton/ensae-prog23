@@ -1,4 +1,5 @@
 import numpy as np
+import graphviz
 
 class Graph:
     """
@@ -139,10 +140,6 @@ class Graph:
         return power
 
 
-
-
-
-
 #QUESTION 1 partie 2 et QUESTION 4: Solution du professeur
 def graph_from_file(filename):
     """
@@ -178,6 +175,8 @@ def graph_from_file(filename):
             else:
                 raise Exception("Format incorrect")
     return g
+
+
 
 
 #QUESTION 12 : Comme suggéré dans l'énoncé, on commence par implémenter la classe UnionFind
@@ -282,3 +281,30 @@ def parcours_largeur_rec(g, node1, dest, chemin, deja_visites, power):
                 return True, max(maxpower, power_min)
     chemin.pop()
     return False, 0
+
+
+def trucks_from_file(filename):
+    camions = []
+    with open(filename, "r") as file:
+        m = int(file.readline())
+        for _ in range(m):
+            camion = list(map(int, file.readline().split()))
+            if len(camion) == 2:
+                power, cout = trajet
+                trajets.append([power, cout])
+            else:
+                raise Exception("Format incorrect")
+    return camions
+
+def draw_graph(graph,chemin):
+    dot = graphviz.Graph() #on crée un graphique à l'aide de la bibliothèque graphviz
+    edges=[]
+    for node1 in graph.graph:
+        for node2,power_min,dist in graph.graph[node1]:
+            if node1<node2:
+                edges.append((node1,node2,power_min))
+    for u, v,w in edges:
+        dot.edge(str(u), str(v))
+    for u, v in zip(chemin, chemin[1:]):
+        dot.edge(str(u), str(v), color='red') # on ajoute les arêtes que l'on souhaite colorier pour les mettre en évidence.
+    return dot.render(format='png')
