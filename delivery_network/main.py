@@ -22,65 +22,48 @@ def camions_utiles(trucks):
     return utiles
     #print(len(trucks), len(camions_utiles(trucks))) renvoie (10000,185) donc cette fonction est très importante
 
+#Approche "glouton" de la recherche du meilleur profit
 def algo_glouton(trucks, trips, budget):
 
     trucks = camions_utiles(trucks)
-    # trier les camions par puissance décroissante
-    trucks = sorted(trucks, key=lambda t: t[0], reverse=True)
+    trucks = sorted(trucks, key=lambda t: t[0], reverse=True) #On trie les camions par puissance décroissante
     
-    # trier les routes par profit décroissant
-    trips = sorted(trips, key=lambda r: r[2], reverse=True)
+    trips = sorted(trips, key=lambda r: r[2], reverse=True) #On trie les routes par profit décroissant
     
-    assigned_trucks = {} #On renvoie un dictionnaire qui a un trajet (src, dest) assigne un camion (puissance, cout) 
-    assigned_budget = 0
+    assignations = {} #On renvoie un dictionnaire qui a un trajet (src, dest) assigne un camion (puissance, cout) 
+    budget_tot = 0
     
     for route in trips: #On parcourt les trajet et pour chaque trajet, on choisit le meilleur camion
         start, end, profit, power_min = route
         
         for truck in trucks:
-            power, cost = truck
+            power, cout = truck
             
-            if power >= power_min and assigned_budget + cost <= budget:
-                assigned_trucks[(start, end)] = truck
-                assigned_budget += cost
+            if power >= power_min and budget_tot + cout <= budget:
+                assignations[(start, end)] = truck
+                budget_tot += cout
                 break
         
-    return assigned_trucks
+    return assignations
 
 
 
-def algo_knapsack(camion_list, trajet_list, budget):
-
-    camion_list = camions_utiles(trucks)
-    # Tri des trajets par profit décroissant
-    trajet_list = sorted(trajet_list, key=lambda t: t[2], reverse=True)
-    # Initialisation de la matrice de programmation dynamique
-    dp = [[0 for _ in range(budget + 1)] for _ in range(len(trajet_list) + 1)]
-    # Remplissage de la matrice de programmation dynamique
-    for i in range(1, len(trajet_list) + 1):
-        for j in range(budget + 1):
-            if camion_list:
-                if trajet_list[i-1][3] <= camion_list[0][0]:
-                    # Le camion le plus puissant peut satisfaire les besoins du trajet
-                    dp[i][j] = max(dp[i-1][j], trajet_list[i-1][2] + dp[i-1][j-camion_list[0][1]])
-                else:
-                    # Le camion le plus puissant ne peut pas satisfaire les besoins du trajet
-                    dp[i][j] = dp[i-1][j]
-            else:
-                dp[i][j] = dp[i-1][j]
-    # Récupération de la solution optimale
-    i = len(trajet_list)
-    j = budget
-    trucks_assigned = []
-    while i > 0 and j >= 0:
-        if dp[i][j] != dp[i-1][j]:
-            # Le trajet i a été satisfait
-            trucks_assigned.append((i-1, camion_list[0]))
-            j -= camion_list[0][1]
-            camion_list.pop(0)
-        i -= 1
-    trucks_assigned.reverse()
-    return trucks_assigned
+def algo_knapsack(routes, trucks, budget):
+    # Tri des camions par coût croissant
+    trucks = sorted(trucks, key=lambda x: x[1])
+    # Initialisation du tableau de résultat
+    result = [0] * (budget + 1)
+    # Boucle sur les routes
+    for route in routes:
+        # Boucle sur les camions
+        for truck in trucks:
+            # Vérification que le camion peut être utilisé pour cette route
+            if truck[0] >= route[3]:
+                # Mise à jour du tableau de résultat si la valeur est supérieure avec ce camion
+                if result[budget - truck[1] + route[3]] < result[budget - truck[1]] + route[2]:
+                    result[budget - truck[1] + route[3]] = result[budget - truck[1]] + route[2]
+    # Retourne le profit maximum
+    return max(result)
 
 
 print(algo_glouton(trucks, trips, budget))
